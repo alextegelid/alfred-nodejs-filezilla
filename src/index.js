@@ -11,6 +11,7 @@ const os = require('os');
 const nameRegex = /<Name>(.*)<\/Name>/g;
 const folderBeginRegex = /<Folder expanded="[\d]+">(.*)</g;
 const folderEndRegex = /<\/Folder>/g;
+const searchQueryRegex = /{query}/i;
 
 let pathParts = [];
 let sites = [];
@@ -77,7 +78,7 @@ function checkSiteName(line) {
 }
 
 function matchesSearchQuery(name) {
-	return name.match(/{query}/i) ? true : false;
+	return name.match(searchQueryRegex) ? true : false;
 }
 
 function printXML() {

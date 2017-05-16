@@ -16,6 +16,10 @@ const searchQueryRegex = /{query}/i;
 let pathParts = [];
 let sites = [];
 
+/**
+ * Read the Filezilla sitemanager.xml file line by line parsing each line for
+ * folder and name tags.
+ */
 fs.readFile(os.homedir()+'/.config/filezilla/sitemanager.xml', 'utf8', (err, data) => {
 	if (err) {
 		throw err;
@@ -37,6 +41,10 @@ fs.readFile(os.homedir()+'/.config/filezilla/sitemanager.xml', 'utf8', (err, dat
 	printXML();
 });
 
+/**
+ * Check if a line contains a opening folder tag
+ * @param  {string} line The line to check.
+ */
 function checkFolderBegin(line) {
 	let match = folderBeginRegex.exec(line);
 	if (match && match.length > 0) {
@@ -57,8 +65,7 @@ function checkFolderEnd(line) {
 
 /**
  * Check if a line contains a name tag
- * @param  {[type]} line [description]
- * @return {[type]}      [description]
+ * @param  {string} line The line to check.
  */
 function checkSiteName(line) {
 	let match = nameRegex.exec(line);
@@ -77,6 +84,11 @@ function checkSiteName(line) {
 	}
 }
 
+/**
+ * Match the search query in name
+ * @param  {string} name The name to match on
+ * @return {bool}      True if name contains the query, else false
+ */
 function matchesSearchQuery(name) {
 	return name.match(searchQueryRegex) ? true : false;
 }

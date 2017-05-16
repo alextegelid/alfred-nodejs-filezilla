@@ -66,14 +66,18 @@ function checkSiteName(line) {
 		let name = match[1];
 		let path = (pathParts.length) ? pathParts.join('/') + '/' + match[1] : match[1];
 		
-		if (path.match(/{query}/i)) {
 		// Make sure the name matches the search query in Alfred
+		if (matchesSearchQuery(name)) {
 			sites.push({
 				name: name,
 				path: path
 			});
 		}
 	}
+}
+
+function matchesSearchQuery(name) {
+	return name.match(/{query}/i) ? true : false;
 }
 
 function printXML() {

@@ -1,4 +1,4 @@
-// Note that this script must be provided to node through a so-called heredoc format.
+// Note that this script must be provided to node through a so-called heredoc format. This means that the script will be executed by the bash interpreter, but it'll call node with this code as stdin.
 // This is a kind of workaround to get Alfred to run a node script.
 // 
 // eg.

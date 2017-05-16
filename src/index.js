@@ -7,7 +7,7 @@
 const fs = require('fs');
 const os = require('os');
 
-// Define the path and name regexes
+// Define the folder and name regexes
 const nameRegex = /<Name>(.*)<\/Name>/g;
 const folderBeginRegex = /<Folder expanded="[\d]+">(.*)</g;
 const folderEndRegex = /<\/Folder>/g;
@@ -20,11 +20,16 @@ fs.readFile(os.homedir()+'/.config/filezilla/sitemanager.xml', 'utf8', (err, dat
 		throw err;
 	}
 	
+	// Split the file into lines
 	const lines = data.split('\n');
 	
+	// Iterate over the lines
 	lines.forEach((line) => {
+		// Check if the line contains a opening folder tag
 		checkFolderBegin(line);
+		// Check if the line contains a cloing folder tag
 		checkFolderEnd(line);
+		// Check if the line contains a name tag
 		checkSiteName(line);
 	});
 	
@@ -38,6 +43,10 @@ function checkFolderBegin(line) {
 	}
 }
 
+/**
+ * Check if a line contains a closing folder tag
+ * @param  {string} line The line to check.
+ */
 function checkFolderEnd(line) {
 	let match = folderEndRegex.exec(line);
 	if (match && match.length > 0) {
@@ -45,6 +54,11 @@ function checkFolderEnd(line) {
 	}
 }
 
+/**
+ * Check if a line contains a name tag
+ * @param  {[type]} line [description]
+ * @return {[type]}      [description]
+ */
 function checkSiteName(line) {
 	let match = nameRegex.exec(line);
 	if (match && match.length > 0) {
@@ -53,6 +67,7 @@ function checkSiteName(line) {
 		let path = (pathParts.length) ? pathParts.join('/') + '/' + match[1] : match[1];
 		
 		if (path.match(/{query}/i)) {
+		// Make sure the name matches the search query in Alfred
 			sites.push({
 				name: name,
 				path: path

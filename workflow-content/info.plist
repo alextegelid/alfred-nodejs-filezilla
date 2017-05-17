@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bundleid</key>
+	<string>com.alextegelid.nodejsfilezilla</string>
+	<key>category</key>
+	<string>Productivity</string>
+	<key>connections</key>
+	<dict>
+		<key>B131BE60-7B64-41E3-B696-95F3AFC65E44</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>B8D63E21-F25A-43C5-B904-C09FFF0665C6</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+	</dict>
+	<key>createdby</key>
+	<string>Alexander Tegelid</string>
+	<key>description</key>
+	<string>Open a site from Site Manager in Filezilla</string>
+	<key>disabled</key>
+	<false/>
+	<key>name</key>
+	<string>Open FileZilla Site v1.0.1</string>
+	<key>objects</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>alfredfiltersresults</key>
+				<false/>
+				<key>argumenttype</key>
+				<integer>0</integer>
+				<key>escaping</key>
+				<integer>127</integer>
+				<key>keyword</key>
+				<string>fz</string>
+				<key>queuedelaycustom</key>
+				<integer>3</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<false/>
+				<key>queuedelaymode</key>
+				<integer>0</integer>
+				<key>queuemode</key>
+				<integer>1</integer>
+				<key>runningsubtext</key>
+				<string>Finding sites...</string>
+				<key>script</key>
+				<string>/usr/local/bin/node &lt;&lt;-'JSCODE'
+
+const fs = require('fs');
+const os = require('os');
+
+// Define the folder and name regexes
+const nameRegex = /&lt;Name&gt;(.*)&lt;\/Name&gt;/g;
+const folderBeginRegex = /&lt;Folder expanded="[\d]+"&gt;(.*)&lt;/g;
+const folderEndRegex = /&lt;\/Folder&gt;/g;
+const searchQueryRegex = /{query}/i;
+
+let pathParts = [];
+let sites = [];
+
+/**
+ * Read the Filezilla sitemanager.xml file line by line parsing each line for
+ * folder and name tags.
+ */
+fs.readFile(os.homedir()+'/.config/filezilla/sitemanager.xml', 'utf8', (err, data) =&gt; {
+	if (err) {
+		throw err;
+	}
+	
+	// Split the file into lines
+	const lines = data.split('\n');
+	
+	// Iterate over the lines
+	lines.forEach((line) =&gt; {
+		// Check if the line contains a opening folder tag
+		checkFolderBegin(line);
+		// Check if the line contains a cloing folder tag
+		checkFolderEnd(line);
+		// Check if the line contains a name tag
+		checkSiteName(line);
+	});
+	
+	printXML();
+});
+
+/**
+ * Check if a line contains a opening folder tag
+ * @param  {string} line The line to check.
+ */
+function checkFolderBegin(line) {
+	let match = folderBeginRegex.exec(line);
+	if (match &amp;&amp; match.length &gt; 0) {
+		pathParts.push(match[1]);
+	}
+}
+
+/**
+ * Check if a line contains a closing folder tag
+ * @param  {string} line The line to check.
+ */
+function checkFolderEnd(line) {
+	let match = folderEndRegex.exec(line);
+	if (match &amp;&amp; match.length &gt; 0) {
+		pathParts.pop();
+	}
+}
+
+/**
+ * Check if a line contains a name tag
+ * @param  {string} line The line to check.
+ */
+function checkSiteName(line) {
+	let match = nameRegex.exec(line);
+	if (match &amp;&amp; match.length &gt; 0) {
+		
+		let name = match[1];
+		let path = (pathParts.length) ? pathParts.join('/') + '/' + match[1] : match[1];
+		
+		// Make sure the name matches the search query in Alfred
+		if (matchesSearchQuery(name)) {
+			sites.push({
+				name: name,
+				path: path
+			});
+		}
+	}
+}
+
+/**
+ * Match the search query in name
+ * @param  {string} name The name to match on
+ * @return {bool}      True if name contains the query, else false
+ */
+function matchesSearchQuery(name) {
+	return name.match(searchQueryRegex) ? true : false;
+}
+
+function printXML() {
+	process.stdout.write('&lt;?xml version="1.0"?&gt;\n');
+	process.stdout.write('&lt;items&gt;\n');
+	
+	sites.forEach(line =&gt; {
+		process.stdout.write(`&lt;item uid='${line.path}' arg='${line.path}' valid='YES' autocomplete='${line.path}'&gt;` + '\n');
+		process.stdout.write(`    &lt;title&gt;${line.name}&lt;/title&gt;` + '\n');
+		process.stdout.write(`    &lt;subtitle&gt;Open '${line.name}' in Filezilla&lt;/subtitle&gt;` + '\n');
+		process.stdout.write(`    &lt;icon type='fileicon'&gt;/Applications/Filezilla.app&lt;/icon&gt; ` + '\n');
+		process.stdout.write(`&lt;/item&gt;` + '\n');
+	});
+	
+	process.stdout.write('&lt;items&gt;');
+}
+
+JSCODE</string>
+				<key>scriptargtype</key>
+				<integer>0</integer>
+				<key>scriptfile</key>
+				<string>searchFilter.js</string>
+				<key>subtext</key>
+				<string>Open Filezilla and connect to a site in the Site Manager</string>
+				<key>title</key>
+				<string>Open in Filezilla</string>
+				<key>type</key>
+				<integer>0</integer>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>B131BE60-7B64-41E3-B696-95F3AFC65E44</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>126</integer>
+				<key>script</key>
+				<string>open /Applications/FileZilla.app/ --args --site="0/{query}"</string>
+				<key>scriptargtype</key>
+				<integer>0</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>B8D63E21-F25A-43C5-B904-C09FFF0665C6</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+	</array>
+	<key>readme</key>
+	<string></string>
+	<key>uidata</key>
+	<dict>
+		<key>B131BE60-7B64-41E3-B696-95F3AFC65E44</key>
+		<dict>
+			<key>xpos</key>
+			<integer>300</integer>
+			<key>ypos</key>
+			<real>90</real>
+		</dict>
+		<key>B8D63E21-F25A-43C5-B904-C09FFF0665C6</key>
+		<dict>
+			<key>xpos</key>
+			<integer>500</integer>
+			<key>ypos</key>
+			<real>90</real>
+		</dict>
+	</dict>
+	<key>webaddress</key>
+	<string></string>
+</dict>
+</plist>

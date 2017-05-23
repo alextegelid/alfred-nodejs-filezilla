@@ -29,9 +29,32 @@
 	<key>disabled</key>
 	<false/>
 	<key>name</key>
-	<string>Open FileZilla Site v1.0.1</string>
+	<string>Open FileZilla Site v1.0.2</string>
 	<key>objects</key>
 	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>100</integer>
+				<key>script</key>
+				<string>open /Applications/FileZilla.app/ --args --site="0/{query}"</string>
+				<key>scriptargtype</key>
+				<integer>0</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>B8D63E21-F25A-43C5-B904-C09FFF0665C6</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
 		<dict>
 			<key>config</key>
 			<dict>
@@ -178,29 +201,6 @@ JSCODE</string>
 			<string>alfred.workflow.input.scriptfilter</string>
 			<key>uid</key>
 			<string>B131BE60-7B64-41E3-B696-95F3AFC65E44</string>
-			<key>version</key>
-			<integer>2</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>concurrently</key>
-				<false/>
-				<key>escaping</key>
-				<integer>126</integer>
-				<key>script</key>
-				<string>open /Applications/FileZilla.app/ --args --site="0/{query}"</string>
-				<key>scriptargtype</key>
-				<integer>0</integer>
-				<key>scriptfile</key>
-				<string></string>
-				<key>type</key>
-				<integer>0</integer>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.script</string>
-			<key>uid</key>
-			<string>B8D63E21-F25A-43C5-B904-C09FFF0665C6</string>
 			<key>version</key>
 			<integer>2</integer>
 		</dict>

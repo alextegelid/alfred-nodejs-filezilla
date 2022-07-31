@@ -38,7 +38,7 @@ fs.readFile(os.homedir()+'/.config/filezilla/sitemanager.xml', 'utf8', (err, dat
 		checkSiteName(line);
 	});
 	
-	printXML();
+	printJSON();
 });
 
 /**
@@ -93,19 +93,25 @@ function matchesSearchQuery(name) {
 	return name.match(searchQueryRegex) ? true : false;
 }
 
-function printXML() {
-	process.stdout.write('<?xml version="1.0"?>\n');
-	process.stdout.write('<items>\n');
+function printJSON() {
+	process.stdout.write('{"items": [');
 	
 	sites.forEach(line => {
-		process.stdout.write(`<item uid='${line.path}' arg='${line.path}' valid='YES' autocomplete='${line.path}'>` + '\n');
-		process.stdout.write(`    <title>${line.name}</title>` + '\n');
-		process.stdout.write(`    <subtitle>Open '${line.name}' in Filezilla</subtitle>` + '\n');
-		process.stdout.write(`    <icon type='fileicon'>/Applications/Filezilla.app</icon> ` + '\n');
-		process.stdout.write(`</item>` + '\n');
+		process.stdout.write(`{
+			"uid": "${line.path}",
+			"type": "file",
+			"title": "${line.name}",
+			"subtitle": "Open '${line.name}' in Filezilla",
+			"arg": "${line.path}",
+			"autocomplete": "${line.path}",
+			"icon": {
+				"type": "fileicon",
+				"path": "/Applications/Filezilla.app"
+			}
+        }`);
 	});
 	
-	process.stdout.write('<items>');
+	process.stdout.write(']}');
 }
 
 // The end of the heredoc format must be included in the end of the script.

@@ -108,7 +108,7 @@ function printJSON() {
 				"type": "fileicon",
 				"path": "/Applications/Filezilla.app"
 			}
-        }`);
+        },`);
 	});
 	
 	process.stdout.write(']}');

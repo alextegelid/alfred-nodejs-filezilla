@@ -10,4 +10,4 @@ I was inspired by [jeffmagill/alfred-open-in-filezilla](https://github.com/jeffm
 
 ## Known issues
 
-* Does not work if FileZilla is already open. I't seems to be a problem with the FileZilla CLI. The workflow will put FileZilla in focus, but not connect to the site.
+* Does not work if FileZilla is already open. It seems to be a problem with the FileZilla CLI. The workflow will put FileZilla in focus, but not connect to the site.
